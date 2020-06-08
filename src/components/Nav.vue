@@ -17,12 +17,13 @@ export default { name: "Nav" };
 </script>
 
 <style lang="scss" scoped>
+@import "~@/assets/style/helper.scss";
+
 nav {
+  @extend %outerShadow;
   display: flex;
   justify-content: space-around;
-  box-shadow: 0 0 3px rgba($color: black, $alpha: 0.3);
   .item {
-    padding: 2px 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -30,10 +31,11 @@ nav {
     .icon {
       width: 32px;
       height: 32px;
+      padding: 2px;
     }
   }
   .selected {
-    color: #f60;
+    color: $color-highlight;
   }
 }
 </style>
