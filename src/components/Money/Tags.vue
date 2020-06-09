@@ -11,7 +11,7 @@
       </ul>
     </div>
     <div class="new">
-      <button>新增标签</button>
+      <button @click="create">新增标签</button>
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@
 
   @Component
   export default class Tags extends Vue {
-    @Prop(Array) dataSource: string[] | undefined;
+    @Prop(Array) readonly dataSource: string[] | undefined;
     selectedTags: string[] = [];
     toggle(tag: string) {
       const index = this.selectedTags.indexOf(tag);
@@ -30,6 +30,15 @@
         this.selectedTags.splice(index, 1);
       } else {
         this.selectedTags.push(tag);
+      }
+      this.$emit("update:value", this.selectedTags);
+    }
+    create() {
+      const name = window.prompt("请输入新的标签:");
+      if (name === "") {
+        window.alert("标签名不能为空!");
+      } else if (this.dataSource) {
+        this.$emit("update:dataSource", [...this.dataSource, name]);
       }
     }
   }
@@ -42,7 +51,7 @@
     padding: 16px;
     display: flex;
     flex-grow: 1;
-    justify-content: space-between;
+    justify-content: flex-end;
     flex-direction: column;
     > .currentWrapper {
       overflow: hidden auto;
