@@ -1,13 +1,20 @@
 <template>
-  <Layout>编辑标签</Layout>
+  <Layout>
+    <div>
+      <Icon name="left" />
+      <span>编辑标签</span>
+      <FormItem field-name="标签名" placeholder="在这里输入标签名" />
+    </div>
+  </Layout>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { tagsModel } from "../models/tagsModel";
+import FormItem from "../components/Money/FormItem.vue";
 
-@Component
+@Component({ components: { FormItem } })
 export default class EditLabel extends Vue {
   created() {
     const id = this.$route.params.id;
