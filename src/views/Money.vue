@@ -5,7 +5,7 @@
     <Types :value.sync="record.type" />
     <Notes @update:value="onUpdateNotes" />
     <Tags :data-source.sync="tags" @update:value="onUpdateTags" />
-    {{records}}
+    {{ records }}
   </Layout>
 </template>
 
@@ -24,7 +24,7 @@
   export default class Money extends Vue {
     tags = ["衣", "食", "住", "行"];
     record: RecordItem = { tags: [], notes: "", type: "-", amount: 0 };
-    records: RecordItem[] = model.fetch();
+    records = model.fetch();
 
     onUpdateTags(value: string[]) {
       this.record.tags = value;
@@ -32,19 +32,16 @@
     onUpdateNotes(value: string) {
       this.record.notes = value;
     }
-    // onUpdateTypes(value: string) {
-    //   this.record.type = value;
-    // }
     onUpdateAmount(value: string) {
       this.record.amount = parseFloat(value);
     }
     saveRecord() {
       this.record.createAt = new Date();
-      this.records.push(JSON.parse(JSON.stringify(this.record)));
+      this.records.push(model.clone(this.record));
     }
     @Watch("records")
     onRecordsChanged() {
-      window.localStorage.setItem("records", JSON.stringify(this.records));
+      model.save(this.records);
     }
   }
 </script>
