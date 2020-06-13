@@ -18,13 +18,12 @@ import FormItem from "@/components/Money/FormItem.vue";
 import Tags from "@/components/Money/Tags.vue";
 import { Component, Watch } from "vue-property-decorator";
 import { recordsModel } from "@/models/recordsModel.ts";
-import { tagsModel } from "@/models/tagsModel.ts";
 
 @Component({
   components: { NumberPad, Types, FormItem, Tags }
 })
 export default class Money extends Vue {
-  tags = tagsModel.fetch();
+  tags = window.tags;
   record: RecordItem = { tags: [], notes: "", type: "-", amount: 0 };
   records = recordsModel.fetch();
 
