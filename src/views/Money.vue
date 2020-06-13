@@ -3,7 +3,10 @@
     <number-pad @update:value="onUpdateAmount" @submit="saveRecord" />
     <!-- <Types :value="record.type" @update:value="onUpdateTypes" /> -->
     <Types :value.sync="record.type" />
-    <FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateFormItem" />
+    <div class="notes">
+      <FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateFormItem" />
+    </div>
+
     <Tags :data-source.sync="tags" @update:value="onUpdateTags" />
     {{ records }}
   </Layout>
@@ -51,5 +54,8 @@ export default class Money extends Vue {
 .layout-content {
   display: flex;
   flex-direction: column-reverse;
+}
+.notes {
+  padding: 12px 0;
 }
 </style>

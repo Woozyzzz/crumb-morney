@@ -1,7 +1,7 @@
 <template>
-  <label class="notes">
+  <label class="formItem">
     <span class="name">{{fieldName}}</span>
-    <!-- <input type="text" placeholder="在这里输入备注" :value="value" @input="value=$event.target.value" /> -->
+    <!-- <input type="text" :placeholder="placeholder" :value="value" @input="value=$event.target.value" /> -->
     <input type="text" :placeholder="placeholder" v-model="value" />
   </label>
 </template>
@@ -23,9 +23,8 @@ export default class FormItem extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.notes {
+.formItem {
   font-size: 14px;
-  background: #f5f5f5;
   padding-left: 16px;
   display: flex;
   align-items: center;
@@ -33,7 +32,7 @@ export default class FormItem extends Vue {
     padding-right: 16px;
   }
   input {
-    height: 64px;
+    height: 40px;
     flex-grow: 1;
     background: transparent;
     border: none;
