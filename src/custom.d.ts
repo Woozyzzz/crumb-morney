@@ -19,4 +19,5 @@ type TagsModel = {
 };
 interface Window {
   tags: Tag[];
+  createTag: (name: string) => void;
 }
