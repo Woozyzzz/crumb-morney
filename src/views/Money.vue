@@ -17,16 +17,22 @@ import Types from "@/components/Money/Types.vue";
 import FormItem from "@/components/Money/FormItem.vue";
 import Tags from "@/components/Money/Tags.vue";
 import { Component } from "vue-property-decorator";
-import store from "@/store/index2.ts";
 
 @Component({
-  components: { NumberPad, Types, FormItem, Tags }
+  components: { NumberPad, Types, FormItem, Tags },
+  computed: {
+    recordList() {
+      return this.$store.state.recordList;
+    }
+  }
 })
 export default class Money extends Vue {
-  tags = store.fetchTags;
+  // tags = store.fetchTags;
   record: RecordItem = { tags: [], notes: "", type: "-", amount: 0 };
-  records = store.fetchRecords;
-
+  // records = store.fetchRecords;
+  created() {
+    this.$store.commit("fetchRecords");
+  }
   onUpdateFormItem(value: string) {
     this.record.notes = value;
   }
@@ -34,7 +40,7 @@ export default class Money extends Vue {
     this.record.amount = parseFloat(value);
   }
   saveRecord() {
-    store.createRecord(this.record);
+    this.$store.commit("createRecord", this.record);
   }
 }
 </script>

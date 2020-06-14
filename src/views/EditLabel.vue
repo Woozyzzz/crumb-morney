@@ -3,7 +3,7 @@
     <div class="navBar">
       <Icon class="leftIcon" name="left" @click="goBack" />
       <span class="title">编辑标签</span>
-      <span class="rightIcon"></span>
+      <span class="rightIcon" />
     </div>
     <div class="form-wrapper">
       <FormItem :value="tag.name" @update:value="update" field-name="标签名" placeholder="在这里输入标签名" />
@@ -19,29 +19,28 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import FormItem from "@/components/Money/FormItem.vue";
 import Button from "@/components/Button.vue";
-import store from '@/store/index2.ts';
 
 @Component({ components: { FormItem, Button } })
 export default class EditLabel extends Vue {
   tag?: Tag = undefined;
   created() {
-    this.tag = store.findTag(this.$route.params.id);
+    // this.tag = store.findTag(this.$route.params.id);
     if (!this.tag) {
       this.$router.replace("/404");
     }
   }
   update(name: string) {
     if (this.tag) {
-      store.updateTag(this.tag.id, name);
+      // store.updateTag(this.tag.id, name);
     }
   }
   remove() {
     if (this.tag) {
-      if (store.removeTag(this.tag.id)) {
-        this.goBack();
-      }
-    } else {
-      window.alert("删除失败");
+      // if (store.removeTag(this.tag.id)) {
+      //     this.goBack();
+      //   }
+      // } else {
+      //   window.alert("删除失败");
     }
   }
   goBack() {
