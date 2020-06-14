@@ -20,7 +20,7 @@ import store from "@/store/index2.ts";
 
 @Component({ components: { Button } })
 export default class Labels extends Vue {
-  tags = store.tags;
+  tags = store.fetchTags;
 
   createTag() {
     const name = window.prompt("请输入标签名：");

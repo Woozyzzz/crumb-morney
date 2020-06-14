@@ -23,9 +23,9 @@ import store from "@/store/index2.ts";
   components: { NumberPad, Types, FormItem, Tags }
 })
 export default class Money extends Vue {
-  tags = store.tags;
+  tags = store.fetchTags;
   record: RecordItem = { tags: [], notes: "", type: "-", amount: 0 };
-  records = store.records;
+  records = store.fetchRecords;
 
   onUpdateTags(value: string[]) {
     this.record.tags = value;
