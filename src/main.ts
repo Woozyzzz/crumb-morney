@@ -15,6 +15,9 @@ Vue.component("Layout", Layout);
 Vue.component("Icon", Icon);
 
 window.tags = tagsModel.fetch();
+window.findTag = (id: string) => {
+  return window.tags.filter((item) => item.id === id)[0];
+};
 window.createTag = (name: string) => {
   const message = tagsModel.create(name);
   if (message === "duplicated") {
@@ -22,6 +25,12 @@ window.createTag = (name: string) => {
   } else if (message === "success") {
     window.alert("添加成功");
   }
+};
+window.removeTag = (id: string) => {
+  return tagsModel.remove(id);
+};
+window.updateTag = (id: string, name: string) => {
+  return tagsModel.update(id, name);
 };
 
 new Vue({

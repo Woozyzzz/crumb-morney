@@ -19,5 +19,8 @@ type TagsModel = {
 };
 interface Window {
   tags: Tag[];
+  findTag: (id: string) => Tag | undefined;
   createTag: (name: string) => void;
+  removeTag: (id: string) => boolean;
+  updateTag: TagsModel["update"];
 }
