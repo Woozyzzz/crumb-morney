@@ -5,6 +5,7 @@
       :key="item.value"
       @click="select(item)"
       :class="liClass(item)"
+      class="tabs-item"
     >{{item.text}}</li>
   </ul>
 </template>
@@ -43,7 +44,7 @@ export default class Tabs extends Vue {
   display: flex;
   text-align: center;
   font-size: 24px;
-  > li {
+  &-item {
     width: 50%;
     height: 64px;
     display: flex;
