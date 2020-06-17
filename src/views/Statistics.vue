@@ -4,7 +4,7 @@
     <Tabs class-prefix="interval" :data-source="intervalList" :value.sync="interval" />
     <ol>
       <li v-for="group in result" :key="group.title">
-        <h3 class="title">{{group.title}}</h3>
+        <h3 class="title">{{beautify(group.title)}}</h3>
         <ol>
           <li class="record" v-for="item in group.items" :key="item.id">
             <span>{{tagString(item.tags)}}</span>
@@ -23,6 +23,7 @@ import { Component } from "vue-property-decorator";
 import Tabs from "@/components/Tabs.vue";
 import intervalList from "@/constants/intervalList.ts";
 import recordTypeList from "@/constants/recordTypeList.ts";
+import dayjs from "dayjs";
 
 @Component({
   components: { Tabs }
@@ -55,6 +56,23 @@ export default class Statistics extends Vue {
   // methods
   tagString(tags: Tag[]) {
     return tags.length === 0 ? "无" : tags.map(item => item.name).join(", ");
+  }
+  beautify(string: string) {
+    const now = dayjs();
+    const day = dayjs(string);
+    console.log(day);
+
+    if (day.isSame(now, "day")) {
+      return "今天";
+    } else if (day.isSame(now.subtract(1, "day"), "day")) {
+      return "昨天";
+    } else if (day.isSame(now.subtract(2, "day"), "day")) {
+      return "前天";
+    } else if (day.isSame(now, "year")) {
+      return day.format("M月D日");
+    } else {
+      return day.format("YYYY年M月D日");
+    }
   }
 }
 </script>
