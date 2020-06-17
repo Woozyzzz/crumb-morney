@@ -6,7 +6,12 @@
       <span class="rightIcon" />
     </div>
     <div class="form-wrapper">
-      <FormItem :value="tag.name" @update:value="update" field-name="标签名" placeholder="在这里输入标签名" />
+      <FormItem
+        :value="currentTag.name"
+        @update:value="update"
+        field-name="标签名"
+        placeholder="在这里输入标签名"
+      />
     </div>
     <div class="button-wrapper">
       <Button @click="remove">删除标签</Button>
@@ -24,10 +29,11 @@ import Button from "@/components/Button.vue";
   components: { FormItem, Button }
 })
 export default class EditLabel extends Vue {
+  // computed
   get currentTag() {
     return this.$store.state.currentTag;
   }
-
+  // hooks
   created() {
     const id = this.$route.params.id;
     this.$store.commit("fetchTags");
@@ -36,6 +42,7 @@ export default class EditLabel extends Vue {
       this.$router.replace("/404");
     }
   }
+  // methods
   update(name: string) {
     if (this.currentTag) {
       this.$store.commit("updateTag", { id: this.currentTag.id, name });

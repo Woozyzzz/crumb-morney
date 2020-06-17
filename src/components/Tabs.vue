@@ -14,24 +14,21 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
-type DateSourceItem = {
-  text: string;
-  value: string;
-};
+type DateSourceItem = { text: string; value: string };
 
 @Component
 export default class Tabs extends Vue {
+  // props
   @Prop({ required: true, type: Array }) readonly dataSource!: DateSourceItem[];
   @Prop(String) readonly value!: string;
-  @Prop(String) classPrefix?: string;
-
+  @Prop(String) readonly classPrefix?: string;
+  // methods
   liClass(item: DateSourceItem) {
     return {
       selected: item.value === this.value,
       [this.classPrefix + "-tabs-item"]: this.classPrefix
     };
   }
-
   select(item: DateSourceItem) {
     this.$emit("update:value", item.value);
   }

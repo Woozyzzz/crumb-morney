@@ -23,16 +23,17 @@ import { TagHelper } from "@/mixins/TagHelper";
 
 @Component
 export default class Tags extends Mixins(TagHelper) {
+  // data
   selectedTags: string[] = [];
-
+  // computed
   get tagList() {
     return this.$store.state.tagList;
   }
-
+  // hooks
   created() {
     this.$store.commit("fetchTags");
   }
-
+  // methods
   toggle(tag: string) {
     const index = this.selectedTags.indexOf(tag);
     if (index >= 0) {
