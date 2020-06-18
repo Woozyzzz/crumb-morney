@@ -1,7 +1,7 @@
 <template>
   <Layout class-prefix="layout">
     <!-- <div class="Wrapper"> -->
-    <number-pad @update:value="onUpdateAmount" @submit="saveRecord" />
+    <number-pad :value="record.amount" @update:value="onUpdateAmount" @submit="saveRecord" />
     <Tabs :data-source="recordTypeList" :value.sync="record.type" />
     <div class="notes">
       <FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateFormItem" />
@@ -42,7 +42,7 @@ export default class Money extends Vue {
   onUpdateAmount(value: string) {
     this.record.amount = parseFloat(value);
   }
-  onUpdateTags(value: string[]) {
+  onUpdateTags(value: Tag[]) {
     this.record.tags = value;
   }
   saveRecord() {
@@ -51,8 +51,8 @@ export default class Money extends Vue {
 }
 </script>
 
-<style lang="scss">
-.layout-content {
+<style lang="scss" scoped>
+::v-deep .layout-content {
   // .Wrapper {
   display: flex;
   // align-items: flex-end;

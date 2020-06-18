@@ -22,12 +22,13 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
 @Component
 export default class NumberPad extends Vue {
-  // data
-  output = "0";
+  // props
+  @Prop(Number) readonly value!: number;
+  output = this.value.toString();
   // methods
   inputContent(event: MouseEvent) {
     const button = event.target as HTMLButtonElement;

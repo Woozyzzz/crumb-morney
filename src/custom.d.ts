@@ -1,9 +1,9 @@
 type RecordItem = {
-  tags: string[];
+  tags: Tag[];
   notes: string;
   type: string;
   amount: number;
-  createAt?: string;
+  createdAt?: string;
 };
 type Tag = {
   id: string;
