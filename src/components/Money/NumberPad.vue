@@ -1,19 +1,24 @@
 <template>
   <div class="numberPad">
-    <div class="output">{{output}}</div>
     <div class="buttons">
       <button @click="inputContent">1</button>
       <button @click="inputContent">2</button>
       <button @click="inputContent">3</button>
-      <button @click="clear">清空</button>
+      <button @click="backSpace">
+        <Icon name="delete" />
+      </button>
       <button @click="inputContent">4</button>
       <button @click="inputContent">5</button>
       <button @click="inputContent">6</button>
-      <button @click="remove">删除</button>
+      <button @click="clear">AC</button>
       <button @click="inputContent">7</button>
       <button @click="inputContent">8</button>
       <button @click="inputContent">9</button>
-      <button class="ok" @click="ok">OK</button>
+      <button
+        class="ok"
+        :class="{selectedOut:dataType==='-',selectedIn:dataType==='+'}"
+        @click="ok"
+      >确定</button>
       <button class="zero" @click="inputContent">0</button>
       <button @click="inputContent">.</button>
     </div>
@@ -22,47 +27,56 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Watch, Prop } from "vue-property-decorator";
 
 @Component
 export default class NumberPad extends Vue {
   // props
-  @Prop(Number) readonly value!: number;
-  output = this.value.toString();
+  @Prop(String) readonly dataType: string | undefined;
+  @Prop(String) readonly dataAmount!: string;
+  // data
+  amount = this.dataAmount.toString();
+  // watch
+  // @Watch("dataAmount")
+  // onDataAmountChange(val: string, oldVal: string) {
+  //   console.log(val);
+  // }
   // methods
   inputContent(event: MouseEvent) {
     const button = event.target as HTMLButtonElement;
     const input = button.textContent as string;
-    if (this.output.length === 16) {
+    if (this.amount.length === 8) {
       return;
     }
-    if (this.output === "0") {
+    if (this.amount === "0") {
       if ("0123456789".indexOf(input) >= 0) {
-        this.output = input;
+        this.amount = input;
       } else {
-        this.output += input;
+        this.amount += input;
       }
-    } else if (input.indexOf(".") >= 0) {
+    } else if (this.amount.indexOf(".") >= 0 && input === ".") {
       return;
     } else {
-      this.output += input;
+      this.amount += input;
     }
+    this.$emit("update:dataAmount", this.amount);
   }
   clear() {
-    this.output = "0";
+    this.amount = "0";
+    this.$emit("update:dataAmount", this.amount);
   }
-  remove() {
-    if (this.output.length === 1) {
-      this.output = "0";
+  backSpace() {
+    if (this.amount.length === 1) {
+      this.amount = "0";
     } else {
-      this.output = this.output.slice(0, -1);
+      this.amount = this.amount.slice(0, -1);
     }
+    this.$emit("update:dataAmount", this.amount);
   }
   ok() {
-    this.$emit("update:value", this.output);
-    this.$emit("submit", this.output);
-    this.output = "0";
-    window.alert("记账成功！");
+    this.$emit("submit", this.amount);
+    this.amount = "0";
+    this.$emit("update:dataAmount", this.amount);
   }
 }
 </script>
@@ -71,58 +85,34 @@ export default class NumberPad extends Vue {
 @import "~@/assets/style/helper.scss";
 
 .numberPad {
-  .output {
-    @extend %innerShadow;
-    font-size: 36px;
-    font-family: Consolas, monospace;
-    padding: 9px 16px;
-    text-align: right;
-  }
   .buttons {
     @extend %clearFix;
-    > button {
-      $w: 25%;
-      $h: 64px;
-      width: $w;
-      height: $h;
+    background: lighten($color: $color-normal, $amount: 30);
+    button {
+      font-size: 20px;
+      margin-top: 8px;
+      margin-left: 2%;
+      width: 22.5%;
+      height: 48px;
       float: left;
-      background: transparent;
+      background: #fff;
       border: none;
+      border-radius: 4px;
       &.ok {
-        height: $h * 2;
+        height: 48px * 2 + 8px;
         float: right;
+        margin-right: 2%;
+        color: #fff;
+        &.selectedOut {
+          background: $color-out;
+        }
+        &.selectedIn {
+          background: $color-in;
+        }
       }
       &.zero {
-        width: $w * 2;
-      }
-      $bg: #f2f2f2;
-      &:nth-child(1) {
-        background: $bg;
-      }
-      &:nth-child(2),
-      &:nth-child(5) {
-        background: darken($bg, 4% * 1);
-      }
-      &:nth-child(3),
-      &:nth-child(6),
-      &:nth-child(9) {
-        background: darken($bg, 4% * 2);
-      }
-      &:nth-child(4),
-      &:nth-child(7),
-      &:nth-child(10) {
-        background: darken($bg, 4% * 3);
-      }
-      &:nth-child(8),
-      &:nth-child(11),
-      &:nth-child(13) {
-        background: darken($bg, 4% * 4);
-      }
-      &:nth-child(14) {
-        background: darken($bg, 4% * 5);
-      }
-      &:nth-child(12) {
-        background: darken($bg, 4% * 6);
+        width: 23.5 * 2%;
+        margin-bottom: 2%;
       }
     }
   }

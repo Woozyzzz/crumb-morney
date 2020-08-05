@@ -1,16 +1,10 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import clone from "@/lib/clone";
-import createId from "@/lib/createId";
+import clone from "@/lib/clone.ts";
+import createId from "@/lib/createId.ts";
 import dayjs from "dayjs";
 
 Vue.use(Vuex);
-
-type RootState = {
-  recordList: RecordItem[];
-  tagList: Tag[];
-  currentTag?: Tag;
-};
 
 const store = new Vuex.Store({
   state: {
@@ -19,40 +13,66 @@ const store = new Vuex.Store({
     currentTag: undefined,
   } as RootState,
   mutations: {
-    fetchRecords(state) {
+    // record
+    fetchRecordList(state) {
       state.recordList = JSON.parse(
         window.localStorage.getItem("recordList") || "[]"
       );
     },
     createRecord(state, record) {
-      const record2: RecordItem = clone(record);
+      const record2 = clone(record);
       record2.createdAt = dayjs().format();
       state.recordList.push(record2);
-      store.commit("saveRecords");
+      store.commit("saveRecordList");
     },
-    saveRecords(state) {
+    saveRecordList(state) {
       window.localStorage.setItem(
         "recordList",
         JSON.stringify(state.recordList)
       );
     },
-    fetchTags(state) {
+    // tag
+    fetchTagList(state) {
       state.tagList = JSON.parse(
         window.localStorage.getItem("tagList") || "[]"
       );
+      if (!state.tagList || state.tagList.length === 0) {
+        const tagList: string[] = [
+          "服饰",
+          "餐饮",
+          "住房",
+          "交通",
+          "购物",
+
+          "美容",
+          "学习",
+          "娱乐",
+          "运动",
+          "旅游",
+
+          "医疗",
+          "人情",
+          "红包",
+          "转账",
+          "其他",
+        ];
+        tagList.forEach((item) => {
+          store.commit("createTag", item);
+        });
+      }
     },
     createTag(state, name: string) {
       const names = state.tagList.map((item) => item.name);
       if (names.indexOf(name) >= 0) {
-        window.alert("标签名重复");
+        window.alert("该标签已存在！");
       } else {
         const id = createId().toString();
         state.tagList.push({ id, name });
-        store.commit("saveTags");
-        window.alert("添加成功");
+        store.commit("saveTagList");
+        // window.alert("添加成功");
       }
     },
-    saveTags(state) {
+    saveTagList(state) {
       window.localStorage.setItem("tagList", JSON.stringify(state.tagList));
     },
     setCurrentTag(state, id: string) {
@@ -60,26 +80,23 @@ const store = new Vuex.Store({
     },
     updateTag(state, payload: { id: string; name: string }) {
       const { id, name } = payload;
-      const idList = state.tagList.map((item) => item.id);
       const names = state.tagList.map((item) => item.name);
       if (names.indexOf(name) >= 0) {
         window.alert("标签名重复了");
       } else {
         const tag = state.tagList.filter((item) => item.id === id)[0];
         tag.name = name;
-        store.commit("saveTags");
+        store.commit("saveTagList");
       }
     },
     removeTag(state, id: string) {
-      let index = -1;
       for (let i = 0; i < state.tagList.length; i++) {
         if (state.tagList[i].id === id) {
-          index = i;
+          state.tagList.splice(i, 1);
+          store.commit("saveTagList");
           break;
         }
       }
-      state.tagList.splice(index, 1);
-      store.commit("saveTags");
     },
   },
   actions: {},

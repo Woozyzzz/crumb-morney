@@ -1,13 +1,12 @@
 <template>
-  <label class="formItem">
-    <span class="name">{{fieldName}}</span>
-    <!-- <input type="text" :placeholder="placeholder" :value="value" @input="value=$event.target.value" /> -->
+  <label class="notes">
     <input
       type="text"
-      :placeholder="placeholder"
-      :value="value"
-      @change="onValueChanged($event.target.value)"
+      :placeholder="dataPlaceholder"
+      :value="dataNote"
+      @change="changeNote($event.target.value)"
     />
+    <!-- <input type="text" :placeholder="dataPlaceholder" v-model="dataNote" /> -->
   </label>
 </template>
 
@@ -18,31 +17,29 @@ import { Component, Prop } from "vue-property-decorator";
 @Component
 export default class FormItem extends Vue {
   // props
-  @Prop({ default: "" }) readonly value!: string;
-  @Prop(String) readonly fieldName!: string;
-  @Prop(String) readonly placeholder: string | undefined;
+  @Prop({ default: "" }) readonly dataNote!: string;
+  @Prop({ default: "" }) readonly dataPlaceholder!: string;
   // methods
-  onValueChanged(value: string, oldValue: string) {
-    this.$emit("update:value", value);
+  changeNote(note: string) {
+    this.$emit("update:dataNote", note);
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.formItem {
-  font-size: 14px;
-  padding-left: 16px;
+.notes {
   display: flex;
-  align-items: center;
-  .name {
-    padding-right: 16px;
-  }
   input {
-    height: 40px;
-    flex-grow: 1;
+    font-size: 16px;
+    color: darkslateblue;
+    height: 28px;
+    width: 100%;
     background: transparent;
     border: none;
-    padding-right: 16px;
+    margin: 1% 6%;
+    &::-webkit-input-placeholder {
+      color: darkslateblue;
+    }
   }
 }
 </style>

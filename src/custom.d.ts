@@ -1,19 +1,30 @@
 type RecordItem = {
-  tags: Tag[];
-  notes: string;
+  amount: string;
   type: string;
-  amount: number;
-  createdAt?: string;
+  selectedTags: string[];
+  note: string;
+  createdAt?: Date;
 };
 type Tag = {
   id: string;
   name: string;
 };
-type TagsModel = {
+type TagListModel = {
   data: Tag[];
   fetch: () => Tag[];
-  create: (name: string) => "success" | "duplicated"; // 联合类型
-  update: (id: string, name: string) => "success" | "not found" | "duplicated";
-  remove: (id: string) => boolean;
   save: () => void;
+  create: (name: string) => "success" | "duplicated";
+  update: (id: string, name: string) => "success" | "notFound" | "duplicated";
+  remove: (id: string) => boolean;
 };
+type RootState = {
+  recordList: RecordItem[];
+  tagList: Tag[];
+  currentTag?: Tag;
+};
+type DateSourceItem = {
+  text: string;
+  value: string;
+};
+type HashTableValue = { title: string; items: RecordItem[] };
+type Result = { title: string; total?: number; items: RecordItem[] }[];

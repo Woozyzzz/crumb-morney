@@ -1,13 +1,13 @@
 <template>
   <Layout>
     <div class="tags">
-      <router-link :to="`/labels/edit/${tag.id}`" class="tag" v-for="tag in tags" :key="tag.id">
+      <router-link :to="`/labels/edit/${tag.id}`" class="tag" v-for="tag in tagList" :key="tag.id">
         <span>{{tag.name}}</span>
-        <Icon name="right" />
+        <Icon name="right"></Icon>
       </router-link>
     </div>
-    <div class="createTag-wrapper">
-      <Button class="createTag" @click="createTag">新建标签</Button>
+    <div class="createTagWrapper">
+      <PressButton class="createTag" @click="createTag">添加标签</PressButton>
     </div>
   </Layout>
 </template>
@@ -15,53 +15,57 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Mixins } from "vue-property-decorator";
-import Button from "@/components/Button.vue";
-import { TagHelper } from "@/mixins/TagHelper.ts";
+import PressButton from "../components/PressButton.vue";
+import TagHelper from "../mixins/TagHelper";
 
-@Component({
-  components: { Button }
-})
+@Component({ components: { PressButton } })
 export default class Labels extends Mixins(TagHelper) {
-  get tags() {
+  // computed
+  get tagList() {
     return this.$store.state.tagList;
   }
-
+  // hooks
   beforeCreate() {
-    this.$store.commit("fetchTags");
+    this.$store.commit("fetchTagList");
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import "~@/assets/style/helper.scss";
+
 .tags {
-  background: white;
   font-size: 16px;
-  padding-left: 16px;
-  > .tag {
-    min-height: 44px;
+  max-height: 80%;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  .tag {
+    margin: 0 4%;
+    padding-left: 4%;
+    min-height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #e6e6e6;
+    border-bottom: 1px solid lighten($color: $color-normal, $amount: 25);
     svg {
-      width: 20px;
-      height: 20px;
-      color: #333;
-      margin-right: 16px;
+      width: 24px;
+      height: 24px;
     }
   }
 }
-.createTag {
-  background: #767676;
-  color: white;
-  border-radius: 4px;
-  border: none;
-  height: 40px;
-  padding: 0 16px;
-  &-wrapper {
-    text-align: center;
-    padding: 16px;
-    margin-top: 44-16px;
+.createTagWrapper {
+  text-align: center;
+  padding: 16px;
+  margin-top: 28px;
+  .createTag {
+    background: $color-in;
+    color: #ffffff;
+    border-radius: 4px;
+    border: none;
+    height: 40px;
+    padding: 0 16px;
   }
 }
 </style>

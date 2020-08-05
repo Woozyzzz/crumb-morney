@@ -1,61 +1,97 @@
 <template>
-  <ul class="tabs">
-    <li
-      v-for="item in dataSource"
-      :key="item.value"
-      @click="select(item)"
-      :class="liClass(item)"
-      class="tabs-item"
-    >{{item.text}}</li>
-  </ul>
+  <div class="types">
+    <ul>
+      <!-- <li
+        :class="{selectedOut:dataType === '-',[classPrefix + '-item']:classPrefix}"
+        @click="selectType('-')"
+      >支出</li>
+      <li
+        :class="{selectedIn:dataType === '+',[classPrefix + '-item']:classPrefix}"
+        @click="selectType('+')"
+      >收入</li>-->
+      <li
+        v-for="item in dataSource"
+        :key="item.value"
+        :class="liClass(item)"
+        @click="select(item)"
+      >{{item.text}}</li>
+    </ul>
+    <div class="amount" v-if="dataAmount!==undefined">
+      <span>￥{{dataAmount}}</span>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 
-type DateSourceItem = { text: string; value: string };
-
 @Component
-export default class Tabs extends Vue {
+export default class Types extends Vue {
   // props
+  @Prop(String) readonly dataAmount: string | undefined;
+  @Prop(String) readonly dataType: string | undefined;
   @Prop({ required: true, type: Array }) readonly dataSource!: DateSourceItem[];
-  @Prop(String) readonly value!: string;
   @Prop(String) readonly classPrefix?: string;
   // methods
   liClass(item: DateSourceItem) {
-    return {
-      selected: item.value === this.value,
-      [this.classPrefix + "-tabs-item"]: this.classPrefix
-    };
+    if (this.dataType === "-") {
+      return {
+        selectedOut: this.dataType === item.value,
+        [this.classPrefix + "-tabs-item"]: this.classPrefix,
+      };
+    } else if (this.dataType === "+") {
+      return {
+        selectedIn: this.dataType === item.value,
+        [this.classPrefix + "-tabs-item"]: this.classPrefix,
+      };
+    }
   }
   select(item: DateSourceItem) {
-    this.$emit("update:value", item.value);
+    this.$emit("update:dataType", item.value);
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.tabs {
-  background: #c4c4c4;
-  display: flex;
-  text-align: center;
-  font-size: 24px;
-  &-item {
-    width: 50%;
-    height: 64px;
+@import "~@/assets/style/helper.scss";
+
+.types {
+  ul {
+    font-size: 20px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    &.selected::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 4px;
-      background: #333;
+    justify-content: space-between;
+    margin: 2% 6% 0 6%;
+    li {
+      width: 40%;
+      $h: 36px;
+      height: $h;
+      line-height: $h;
+      border-radius: $h/2;
+      color: $color-normal;
+      background: lighten($color: $color-normal, $amount: 25);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &.selectedOut {
+        border: 1px solid $color-out;
+        color: $color-out;
+        background: lighten($color: $color-out, $amount: 45);
+      }
+      &.selectedIn {
+        border: 1px solid $color-in;
+        color: $color-in;
+        background: lighten($color: $color-in, $amount: 35);
+      }
+    }
+  }
+  .amount {
+    font-weight: bold;
+    margin: 0 6% 2% 6%;
+    border-bottom: 1px solid lighten($color: $color-normal, $amount: 25);
+    span {
+      display: block;
+      font-size: 40px;
     }
   }
 }

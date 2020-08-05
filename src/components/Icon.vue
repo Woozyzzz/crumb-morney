@@ -1,10 +1,13 @@
 <template>
-  <svg class="icon" @click="$emit('click',$event)">
-    <use :xlink:href="'#'+name" />
+  <svg class="icon" aria-hidden="true" @click="$emit('click',$event)">
+    <use :xlink:href="'#' + name" />
   </svg>
 </template>
 
 <script lang="ts">
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
+
 const importAll = (requireContext: __WebpackModuleApi.RequireContext) =>
   requireContext.keys().forEach(requireContext);
 try {
@@ -13,10 +16,10 @@ try {
   console.log(error);
 }
 
-export default {
-  name: "Icon",
-  props: ["name"]
-};
+@Component
+export default class Icon extends Vue {
+  @Prop(String) readonly name: string | undefined;
+}
 </script>
 
 <style lang="scss" scoped>

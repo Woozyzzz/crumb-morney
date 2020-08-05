@@ -1,4 +1,4 @@
-# morney
+# crumb-morney
 
 ## Project setup
 ```

@@ -1,14 +1,14 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import Money from "@/views/Money.vue";
-import Labels from "@/views/Labels.vue";
-import Statistics from "@/views/Statistics.vue";
-import NotFound from "@/views/NotFound.vue";
-import EditLabel from "@/views/EditLabel.vue";
+import Money from "../views/Money.vue";
+import Labels from "../views/Labels.vue";
+import Statistics from "../views/Statistics.vue";
+import NotFound from "../views/NotFound.vue";
+import EditLabel from "../views/EditLabel.vue";
 
 Vue.use(VueRouter);
 
-const routes = [
+const routes: Array<RouteConfig> = [
   {
     path: "/",
     redirect: "/money",
@@ -24,19 +24,15 @@ const routes = [
     component: Labels,
   },
   {
-    path: "/labels/edit/:id",
-    name: "EditLabel",
-    component: EditLabel,
-  },
-  {
     path: "/statistics",
     name: "Statistics",
     component: Statistics,
   },
+  { path: "*", name: "404", component: NotFound },
   {
-    path: "*",
-    name: "404",
-    component: NotFound,
+    path: "/labels/edit/:id",
+    name: "EditLabel",
+    component: EditLabel,
   },
 ];
 
