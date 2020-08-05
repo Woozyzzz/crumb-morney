@@ -36,7 +36,7 @@ export default class Labels extends Mixins(TagHelper) {
 
 .tags {
   font-size: 16px;
-  max-height: 80%;
+  max-height: 60vh;
   overflow: auto;
   &::-webkit-scrollbar {
     display: none;
