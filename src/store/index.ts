@@ -6,6 +6,55 @@ import dayjs from "dayjs";
 
 Vue.use(Vuex);
 
+const DEFAULT_TAGS = [
+  "服饰",
+  "餐饮",
+  "住房",
+  "交通",
+  "购物",
+  "美容",
+  "学习",
+  "娱乐",
+  "运动",
+  "旅游",
+  "医疗",
+  "人情",
+  "红包",
+  "转账",
+  "其他",
+];
+
+function readArray(key: string, isValidItem: (item: any) => boolean): any[] {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (raw === null) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isValidItem);
+  } catch (error) {
+    console.warn("Invalid local data for " + key + "; using an empty list.", error);
+    return [];
+  }
+}
+
+function writeArray(key: string, value: any[]) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    // Keep the in-memory state usable when storage is disabled or full.
+    console.warn("Could not persist " + key + ".", error);
+  }
+}
+
+function isRecord(value: any): boolean {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function isTag(value: any): boolean {
+  return isRecord(value) && typeof value.id === "string" &&
+    typeof value.name === "string" && value.name.trim().length > 0;
+}
+
 const store = new Vuex.Store({
   state: {
     recordList: [],
@@ -15,88 +64,73 @@ const store = new Vuex.Store({
   mutations: {
     // record
     fetchRecordList(state) {
-      state.recordList = JSON.parse(
-        window.localStorage.getItem("recordList") || "[]"
-      );
+      state.recordList = readArray("recordList", isRecord);
     },
     createRecord(state, record) {
+      if (!isRecord(record)) return;
       const record2 = clone(record);
       record2.createdAt = dayjs().format();
       state.recordList.push(record2);
-      store.commit("saveRecordList");
+      writeArray("recordList", state.recordList);
     },
     saveRecordList(state) {
-      window.localStorage.setItem(
-        "recordList",
-        JSON.stringify(state.recordList)
-      );
+      writeArray("recordList", state.recordList);
     },
     // tag
     fetchTagList(state) {
-      state.tagList = JSON.parse(
-        window.localStorage.getItem("tagList") || "[]"
-      );
-      if (!state.tagList || state.tagList.length === 0) {
-        const tagList: string[] = [
-          "服饰",
-          "餐饮",
-          "住房",
-          "交通",
-          "购物",
-
-          "美容",
-          "学习",
-          "娱乐",
-          "运动",
-          "旅游",
-
-          "医疗",
-          "人情",
-          "红包",
-          "转账",
-          "其他",
-        ];
-        tagList.forEach((item) => {
-          store.commit("createTag", item);
-        });
+      const savedTags = readArray("tagList", isTag);
+      if (savedTags.length > 0) {
+        state.tagList = savedTags;
+        return;
       }
+
+      state.tagList = DEFAULT_TAGS.map((name) => ({
+        id: createId().toString(),
+        name,
+      }));
+      writeArray("tagList", state.tagList);
     },
-    createTag(state, name: string) {
-      const names = state.tagList.map((item) => item.name);
-      if (names.indexOf(name) >= 0) {
+    createTag(state, rawName: string) {
+      const name = typeof rawName === "string" ? rawName.trim() : "";
+      if (!name) return;
+      if (state.tagList.some((item) => item.name === name)) {
         window.alert("该标签已存在！");
-      } else {
-        const id = createId().toString();
-        state.tagList.push({ id, name });
-        store.commit("saveTagList");
-        // window.alert("添加成功");
+        return;
       }
+      state.tagList.push({ id: createId().toString(), name });
+      writeArray("tagList", state.tagList);
     },
     saveTagList(state) {
-      window.localStorage.setItem("tagList", JSON.stringify(state.tagList));
+      writeArray("tagList", state.tagList);
     },
     setCurrentTag(state, id: string) {
-      state.currentTag = state.tagList.filter((item) => item.id === id)[0];
+      state.currentTag = state.tagList.find((item) => item.id === id);
     },
     updateTag(state, payload: { id: string; name: string }) {
-      const { id, name } = payload;
-      const names = state.tagList.map((item) => item.name);
-      if (names.indexOf(name) >= 0) {
+      if (!payload || typeof payload.id !== "string" || typeof payload.name !== "string") return;
+      const name = payload.name.trim();
+      if (!name) return;
+      const tag = state.tagList.find((item) => item.id === payload.id);
+      if (!tag) return;
+
+      const duplicate = state.tagList.some(
+        (item) => item.id !== payload.id && item.name === name
+      );
+      if (duplicate) {
         window.alert("标签名重复了");
-      } else {
-        const tag = state.tagList.filter((item) => item.id === id)[0];
-        tag.name = name;
-        store.commit("saveTagList");
+        return;
       }
+      tag.name = name;
+      writeArray("tagList", state.tagList);
     },
     removeTag(state, id: string) {
-      for (let i = 0; i < state.tagList.length; i++) {
-        if (state.tagList[i].id === id) {
-          state.tagList.splice(i, 1);
-          store.commit("saveTagList");
-          break;
-        }
+      const index = state.tagList.findIndex((item) => item.id === id);
+      if (index < 0) return;
+      state.tagList.splice(index, 1);
+      if (state.currentTag && state.currentTag.id === id) {
+        state.currentTag = undefined;
       }
+      writeArray("tagList", state.tagList);
     },
   },
   actions: {},
